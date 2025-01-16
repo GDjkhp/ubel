@@ -2,10 +2,28 @@ function getUrlParameter() {
     const params = new Proxy(new URLSearchParams(window.location.search), {
         get: (searchParams, prop) => searchParams.get(prop),
     });
+
+    let subtitles = [];
+    try {
+        if (params.subtitles) {
+            // Format: lang1,url1,lang2,url2
+            const parts = params.subtitles.split(',');
+            for (let i = 0; i < parts.length; i += 2) {
+                if (parts[i] && parts[i + 1]) {
+                    subtitles.push({
+                        lang: decodeURIComponent(parts[i]),
+                        url: decodeURIComponent(parts[i + 1])
+                    });
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error parsing subtitles parameter:', error);
+    }
+
     return {
         url: params.url,
-        subtitles: params.subtitles,
-        decrypt: params.decrypt === 'true'
+        subtitles: subtitles
     };
 }
 
@@ -26,47 +44,10 @@ function addVideo() {
     body.insertAdjacentHTML('beforeend', videoHtml);
 }
 
-// Decrypt function using CryptoJS
-function decryptSubtitles(encryptedContent) {
-    const KISSKH_KEY = '8056483646328763';
-    const KISSKH_INITIALIZATION_VECTOR = '6852612370185273';
-
-    try {
-        // Convert the key and IV to WordArray
-        const key = CryptoJS.enc.Utf8.parse(KISSKH_KEY);
-        const iv = CryptoJS.enc.Utf8.parse(KISSKH_INITIALIZATION_VECTOR);
-
-        // Decrypt
-        const decrypted = CryptoJS.AES.decrypt(encryptedContent, key, {
-            iv: iv,
-            mode: CryptoJS.mode.CBC,
-            padding: CryptoJS.pad.Pkcs7
-        });
-
-        // Convert to UTF-8 string
-        return decrypted.toString(CryptoJS.enc.Utf8);
-    } catch (error) {
-        console.error('Decryption error:', error);
-        throw error;
-    }
-}
-
-async function fetchAndProcessSubtitles(subtitleUrl, shouldDecrypt) {
+async function fetchSubtitles(subtitleUrl) {
     try {
         const response = await fetch(subtitleUrl);
-        let content = await response.text();
-
-        if (shouldDecrypt) {
-            try {
-                content = decryptSubtitles(content);
-            } catch (error) {
-                console.error('Failed to decrypt subtitles:', error);
-                showError('Failed to decrypt subtitles');
-                return null;
-            }
-        }
-
-        // Create a Blob with the processed subtitles
+        const content = await response.text();
         const blob = new Blob([content], { type: 'text/vtt' });
         return URL.createObjectURL(blob);
     } catch (error) {
@@ -76,31 +57,37 @@ async function fetchAndProcessSubtitles(subtitleUrl, shouldDecrypt) {
     }
 }
 
-async function addSubtitles(video, subtitleUrl, shouldDecrypt, label = 'English') {
-    if (!subtitleUrl) return;
+async function addSubtitles(video, subtitlesArray) {
+    if (!subtitlesArray || !subtitlesArray.length) return;
 
-    const processedUrl = await fetchAndProcessSubtitles(subtitleUrl, shouldDecrypt);
-    if (!processedUrl) return;
+    for (const subtitle of subtitlesArray) {
+        const { lang, url } = subtitle;
+        if (!url) continue;
 
-    const track = document.createElement('track');
-    track.kind = 'subtitles';
-    track.label = label;
-    track.srclang = 'en';
-    track.src = processedUrl;
-    track.default = true;
+        const processedUrl = await fetchSubtitles(url);
+        if (!processedUrl) continue;
 
-    video.appendChild(track);
+        const track = document.createElement('track');
+        track.kind = 'subtitles';
+        track.label = lang || 'Unknown';
+        track.srclang = lang?.slice(0, 2).toLowerCase() || 'en';
+        track.src = processedUrl;
+        // Make the first track default
+        track.default = subtitlesArray.indexOf(subtitle) === 0;
 
-    track.addEventListener('error', (e) => {
-        console.error('Error loading subtitles:', e);
-        showError('Failed to load subtitles');
-        URL.revokeObjectURL(processedUrl); // Clean up the blob URL
-    });
+        video.appendChild(track);
 
-    // Clean up blob URL when video is unloaded
-    video.addEventListener('unload', () => {
-        URL.revokeObjectURL(processedUrl);
-    });
+        track.addEventListener('error', (e) => {
+            console.error('Error loading subtitles:', e);
+            showError(`Failed to load ${lang} subtitles`);
+            URL.revokeObjectURL(processedUrl);
+        });
+
+        // Clean up blob URL when video is unloaded
+        video.addEventListener('unload', () => {
+            URL.revokeObjectURL(processedUrl);
+        });
+    }
 }
 
 function ubelJumpscare() {
@@ -114,16 +101,15 @@ function ubelJumpscare() {
 function main() {
     const params = getUrlParameter();
     const videoSrc = params.url;
-    const subtitlesSrc = params.subtitles;
-    const shouldDecrypt = params.decrypt;
+    const subtitles = params.subtitles;
 
     if (!videoSrc) return ubelJumpscare();
 
     addVideo();
     var video = document.getElementById('video');
 
-    if (subtitlesSrc) {
-        addSubtitles(video, subtitlesSrc, shouldDecrypt);
+    if (subtitles && subtitles.length > 0) {
+        addSubtitles(video, subtitles);
     }
 
     if (Hls.isSupported()) {

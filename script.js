@@ -6,8 +6,8 @@ function getUrlParameter() {
     let subtitles = [];
     try {
         if (params.subtitles) {
-            // Format: lang1,url1,lang2,url2
-            const parts = params.subtitles.split(',');
+            // Format: lang1;url1;lang2;url2
+            const parts = params.subtitles.split(';');
             for (let i = 0; i < parts.length; i += 2) {
                 if (parts[i] && parts[i + 1]) {
                     subtitles.push({

@@ -22,10 +22,7 @@ body {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    color: #ff4444;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 10px;
-    border-radius: 4px;
+    color: red;
     font-family: Arial, sans-serif;
     display: none;
     z-index: 2;

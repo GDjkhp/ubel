@@ -35,9 +35,9 @@ function showError(message) {
 
 function addVideo() {
     const videoHtml = `
+        <div id="error-message"></div>
         <div class="video-container">
             <video id="video" class="video-js vjs-theme-forest" controls></video>
-            <div id="error-message"></div>
         </div>
     `;
     const body = document.querySelector('body');

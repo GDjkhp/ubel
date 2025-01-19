@@ -11,7 +11,7 @@ function getUrlParameter() {
             for (let i = 0; i < parts.length; i += 2) {
                 if (parts[i] && parts[i + 1]) {
                     subtitles.push({
-                        lang: decodeURIComponent(parts[i]),
+                        lang: decodeURIComponent(parts[i]).replace("+", " "),
                         url: decodeURIComponent(parts[i + 1])
                     });
                 }

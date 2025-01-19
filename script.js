@@ -72,7 +72,7 @@ function ubelJumpscare() {
 function initializePlayer(videoSrc, subtitles) {
     addVideo();
     const player = videojs('video', {
-        fluid: true,
+        fill: true,
         enableSmoothSeeking: true,
         playbackRates: [0.5, 1, 1.5, 2],
         controlBar: {
@@ -88,8 +88,7 @@ function initializePlayer(videoSrc, subtitles) {
     });
 
     player.src({
-        src: videoSrc,
-        type: videoSrc.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4'
+        src: videoSrc
     });
 
     // Add subtitles if available

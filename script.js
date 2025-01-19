@@ -36,7 +36,7 @@ function showError(message) {
 function addVideo() {
     const videoHtml = `
         <div class="video-container">
-            <video id="video" class="video-js" controls></video>
+            <video id="video" class="video-js vjs-theme-forest" controls></video>
             <div id="error-message"></div>
         </div>
     `;
@@ -75,6 +75,16 @@ function initializePlayer(videoSrc, subtitles) {
         fluid: true,
         enableSmoothSeeking: true,
         playbackRates: [0.5, 1, 1.5, 2],
+        controlBar: {
+            skipButtons: {
+                backward: 5,
+                forward: 5,
+            },
+            remainingTimeDisplay: {
+                displayNegative: false,
+            }
+        },
+        // nativeControlsForTouch: true,
     });
 
     player.src({

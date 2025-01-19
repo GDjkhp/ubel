@@ -26,12 +26,8 @@ body {
     background: #000;
 }
 
-.video-js .vjs-time-control {
-    &.vjs-current-time,
-    &.vjs-duration,
-    &.vjs-time-divider {
-        display: block;
-    }
+.vjs-current-time, .vjs-duration, .vjs-time-divider {
+    display: block !important;
 }
 
 #error-message {

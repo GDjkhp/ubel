@@ -44,7 +44,7 @@ function addVideo() {
     body.insertAdjacentHTML('beforeend', videoHtml);
 }
 
-async function addSubtitles(player, subtitlesArray) {
+function addSubtitles(player, subtitlesArray) {
     if (!subtitlesArray || !subtitlesArray.length) return;
 
     for (const subtitle of subtitlesArray) {

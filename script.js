@@ -84,7 +84,9 @@ function initializePlayer(videoSrc, subtitles) {
                 displayNegative: false,
             }
         },
-        // nativeControlsForTouch: true,
+        html5: {
+            hls: { overrideNative: true }
+        },
     });
 
     player.src({

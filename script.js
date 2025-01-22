@@ -44,21 +44,23 @@ function addVideo() {
     body.insertAdjacentHTML('beforeend', videoHtml);
 }
 
-function addSubtitles(player, subtitlesArray) {
-    if (!subtitlesArray || !subtitlesArray.length) return;
+function createVideoSource(videoSrc, subtitles) {
+    const sources = {
+        src: videoSrc,
+        tracks: []
+    };
 
-    for (const subtitle of subtitlesArray) {
-        const { lang, url } = subtitle;
-        if (!url) continue;
-
-        player.addRemoteTextTrack({
+    if (subtitles && subtitles.length > 0) {
+        sources.tracks = subtitles.map((subtitle, index) => ({
             kind: 'subtitles',
-            srclang: lang?.slice(0, 2).toLowerCase() || 'en',
-            label: lang || 'Unknown',
-            src: url,
-            default: subtitlesArray.indexOf(subtitle) === 0
-        });
+            src: subtitle.url,
+            srclang: subtitle.lang?.slice(0, 2).toLowerCase() || 'en',
+            label: subtitle.lang || 'Unknown',
+            default: index === 0
+        }));
     }
+
+    return sources;
 }
 
 function ubelJumpscare() {
@@ -87,14 +89,8 @@ function initializePlayer(videoSrc, subtitles) {
         // nativeControlsForTouch: true,
     });
 
-    player.src({
-        src: videoSrc
-    });
-
-    // Add subtitles if available
-    if (subtitles && subtitles.length > 0) {
-        addSubtitles(player, subtitles);
-    }
+    const sources = createVideoSource(videoSrc, subtitles);
+    player.src(sources);
 
     // Error handling
     player.on('error', function() {

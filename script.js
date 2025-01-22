@@ -85,7 +85,9 @@ function initializePlayer(videoSrc, subtitles) {
             }
         },
         html5: {
-            hls: { overrideNative: true }
+            // nativeTextTracks: true,
+            nativeAudioTracks: true,
+            nativeVideoTracks: true
         },
     });
 

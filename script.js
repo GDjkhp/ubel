@@ -57,7 +57,7 @@ function addSubtitles(player, subtitlesArray) {
             label: lang || 'Unknown',
             src: url,
             default: subtitlesArray.indexOf(subtitle) === 0
-        });
+        }, false); // Add false to prevent automatic loading
     }
 }
 
@@ -75,25 +75,69 @@ function initializePlayer(videoSrc, subtitles) {
         fill: true,
         enableSmoothSeeking: true,
         playbackRates: [0.5, 1, 1.5, 2],
+        html5: {
+            nativeTextTracks: false, // Force non-native text tracks
+            vhs: {
+                overrideNative: true,
+                enableLowInitialPlaylist: true,
+                smoothQualityChange: true,
+                allowSeeksWithinUnsafeLiveWindow: false,
+                handlePartialData: true
+            }
+        },
         controlBar: {
             skipButtons: {
                 backward: 5,
-                forward: 5,
+                forward: 5
             },
             remainingTimeDisplay: {
-                displayNegative: false,
+                displayNegative: false
             }
-        }
+        },
+        // Improve seeking behavior
+        inactivityTimeout: 3000,
+        preload: 'auto',
+        loadingSpinner: true,
+        suppressNotSupportedError: true
     });
 
+    // Configure source with better buffering
     player.src({
-        src: videoSrc
+        src: videoSrc,
+        type: videoSrc.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4'
     });
 
     // Add subtitles if available
     if (subtitles && subtitles.length > 0) {
         addSubtitles(player, subtitles);
     }
+
+    // Handle seeking to prevent desyncs
+    let seekInProgress = false;
+    player.on('seeking', function() {
+        seekInProgress = true;
+    });
+
+    player.on('seeked', function() {
+        seekInProgress = false;
+        // Ensure audio and video are in sync after seeking
+        if (Math.abs(player.currentTime() - player.audioTracks()[0]?.currentTime) > 0.1) {
+            const currentTime = player.currentTime();
+            player.currentTime(currentTime);
+        }
+    });
+
+    // Monitor for potential desync
+    player.on('timeupdate', function() {
+        if (!seekInProgress && player.audioTracks()[0]) {
+            const videoDiff = Math.abs(player.currentTime() - player.audioTracks()[0].currentTime);
+            if (videoDiff > 0.3) { // If desync is more than 300ms
+                console.log('Correcting A/V sync');
+                const currentTime = player.currentTime();
+                player.currentTime(currentTime);
+            }
+        }
+    });
 
     // Error handling
     player.on('error', function() {
@@ -122,6 +166,16 @@ function initializePlayer(videoSrc, subtitles) {
 
     // Autoplay with error handling
     player.ready(function() {
+        // Ensure proper subtitle loading
+        player.textTracks().on('addtrack', function() {
+            const tracks = player.textTracks();
+            for (let i = 0; i < tracks.length; i++) {
+                if (tracks[i].kind === 'subtitles') {
+                    tracks[i].mode = i === 0 ? 'showing' : 'hidden';
+                }
+            }
+        });
+
         player.play().catch(function(error) {
             console.log("Auto-play prevented:", error);
         });

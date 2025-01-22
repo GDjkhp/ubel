@@ -83,12 +83,7 @@ function initializePlayer(videoSrc, subtitles) {
             remainingTimeDisplay: {
                 displayNegative: false,
             }
-        },
-        html5: {
-            // nativeTextTracks: true,
-            nativeAudioTracks: true,
-            nativeVideoTracks: true
-        },
+        }
     });
 
     player.src({

@@ -91,24 +91,24 @@ function initializePlayer(videoSrc, subtitles) {
     });
 
     let qualityLevels = player.qualityLevels();
-    qualityLevels.on('change', function () {
-        console.log('Quality Level changed!');
-        console.log('New level:', qualityLevels[qualityLevels.selectedIndex].width, "x", qualityLevels[qualityLevels.selectedIndex].height);
-    });
-
     let showLevels = () => {
         for (var i = 0; i < qualityLevels.length; i++) {
             let qualityLevel = qualityLevels[i];
-            console.log(qualityLevel);
+            console.log(`${qualityLevel.height}p:`, qualityLevel.enabled);
         }
     }
 
-    // enable quality level by index, set other levels to false
-    let enableQualityLevel = level => {
+    qualityLevels.on('change', function () {
+        level = qualityLevels.selectedIndex
         for (var i = 0; i < qualityLevels.length; i++) {
             let qualityLevel = qualityLevels[i];
             qualityLevel.enabled = i === level ? true : false;
         }
+        // showLevels();
+        // console.log('Resolution:', qualityLevels[level].width, "x", qualityLevels[level].height);
+    });
+
+    let enableQualityLevel = level => {
         qualityLevels.selectedIndex_ = level;
         qualityLevels.trigger({ type: 'change', selectedIndex: level });
     }

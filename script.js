@@ -95,12 +95,14 @@ function initializePlayer(videoSrc, subtitles) {
         console.log('Quality Level changed!');
         console.log('New level:', qualityLevels[qualityLevels.selectedIndex].width, "x", qualityLevels[qualityLevels.selectedIndex].height);
     });
+
     let showLevels = () => {
         for (var i = 0; i < qualityLevels.length; i++) {
             let qualityLevel = qualityLevels[i];
             console.log(qualityLevel);
         }
     }
+
     // enable quality level by index, set other levels to false
     let enableQualityLevel = level => {
         for (var i = 0; i < qualityLevels.length; i++) {
@@ -110,7 +112,10 @@ function initializePlayer(videoSrc, subtitles) {
         qualityLevels.selectedIndex_ = level;
         qualityLevels.trigger({ type: 'change', selectedIndex: level });
     }
-    player.hlsQualitySelector();
+
+    player.hlsQualitySelector({
+        displayCurrentQuality: true,
+    });
 
     // Add subtitles if available
     if (subtitles && subtitles.length > 0) {
@@ -151,7 +156,6 @@ function initializePlayer(videoSrc, subtitles) {
 
     player.on('loadedmetadata', function () {
         enableQualityLevel(0); // enable highest quality level -> 0: highest, length-1: lowest
-        showLevels();
     });
 }
 

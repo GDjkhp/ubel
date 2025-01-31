@@ -90,6 +90,27 @@ function initializePlayer(videoSrc, subtitles) {
         src: videoSrc
     });
 
+    let qualityLevels = player.qualityLevels();
+    qualityLevels.on('change', function () {
+        console.log('Quality Level changed!');
+        console.log('New level:', qualityLevels[qualityLevels.selectedIndex].width, "x", qualityLevels[qualityLevels.selectedIndex].height);
+    });
+    let showLevels = () => {
+        for (var i = 0; i < qualityLevels.length; i++) {
+            let qualityLevel = qualityLevels[i];
+            console.log(qualityLevel);
+        }
+    }
+    // enable quality level by index, set other levels to false
+    let enableQualityLevel = level => {
+        for (var i = 0; i < qualityLevels.length; i++) {
+            let qualityLevel = qualityLevels[i];
+            qualityLevel.enabled = i === level ? true : false;
+        }
+        qualityLevels.selectedIndex_ = level;
+        qualityLevels.trigger({ type: 'change', selectedIndex: level });
+    }
+
     // Add subtitles if available
     if (subtitles && subtitles.length > 0) {
         addSubtitles(player, subtitles);
@@ -125,6 +146,11 @@ function initializePlayer(videoSrc, subtitles) {
         player.play().catch(function(error) {
             console.log("Auto-play prevented:", error);
         });
+    });
+
+    player.on('loadedmetadata', function () {
+        enableQualityLevel(0); // enable highest quality level -> 0: highest, length-1: lowest
+        showLevels();
     });
 }
 

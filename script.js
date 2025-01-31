@@ -110,6 +110,7 @@ function initializePlayer(videoSrc, subtitles) {
         qualityLevels.selectedIndex_ = level;
         qualityLevels.trigger({ type: 'change', selectedIndex: level });
     }
+    player.hlsQualitySelector();
 
     // Add subtitles if available
     if (subtitles && subtitles.length > 0) {

@@ -22,8 +22,37 @@ body {
     height: 100%;
 }
 
-.vjs-current-time, .vjs-duration, .vjs-time-divider {
-    display: block !important;
+/* Portrait mode - minimal controls */
+@media (max-width: 580px) {
+    .video-js .vjs-control-bar > *:not(.vjs-current-time):not(.vjs-duration):not(.vjs-time-divider):not(.vjs-progress-control):not(.vjs-play-control) {
+        display: none !important;
+    }
+
+    .video-js .vjs-progress-control {
+        width: 100%;
+        order: 1;
+    }
+
+    .vjs-current-time, 
+    .vjs-duration, 
+    .vjs-time-divider,
+    .vjs-play-control {
+        display: block !important;
+        text-align: center;
+        width: 100%;
+    }
+}
+
+/* Landscape mode - full controls */
+@media (orientation: landscape) {
+    .video-js .vjs-control-bar {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .video-js .vjs-control-bar {
+        display: flex !important;
+    }
 }
 
 #error-message {

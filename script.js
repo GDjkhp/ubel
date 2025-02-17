@@ -90,6 +90,22 @@ function initializePlayer(videoSrc, subtitles) {
         src: videoSrc
     });
 
+    player.mobileUi({
+        fullscreen: {
+            enterOnRotate: true,
+            exitOnRotate: true,
+            lockOnRotate: true,
+            lockToLandscapeOnEnter: false,
+            disabled: false
+        },
+        touchControls: {
+            seekSeconds: 10,
+            tapTimeout: 300,
+            disableOnEnd: false,
+            disabled: false,
+        }
+    });
+
     let qualityLevels = player.qualityLevels();
     let showLevels = () => {
         for (var i = 0; i < qualityLevels.length; i++) {

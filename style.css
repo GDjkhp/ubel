@@ -9,7 +9,13 @@ body {
     background: green;
 }
 
-.video-js .vjs-control-bar {
+.vjs-touch-overlay .vjs-play-control .vjs-icon-placeholder:before {
+    width: 100% !important;
+    height: 100% !important;
+    background-color: transparent !important;
+}
+
+.vjs-control-bar {
     display: flex;
     flex-wrap: wrap;
     height: auto;

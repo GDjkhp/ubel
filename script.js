@@ -99,7 +99,7 @@ function initializePlayer(videoSrc, subtitles) {
             disabled: false
         },
         touchControls: {
-            seekSeconds: 10,
+            seekSeconds: 3,
             tapTimeout: 300,
             disableOnEnd: false,
             disabled: false,

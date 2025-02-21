@@ -10,6 +10,6 @@ NoobGPT HLS Video Player
 * <https://github.com/videojs/themes>
 * <https://github.com/chrisboustead/videojs-hls-quality-selector>
 * <https://github.com/mister-ben/videojs-mobile-ui>
-* <https://unpkg.com/focus-visible>
+* <https://github.com/WICG/focus-visible>
 
 ![miside](https://gdjkhp.github.io/img/ubel.jpeg "skilled teaser ubel-san")

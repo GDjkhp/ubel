@@ -3,7 +3,7 @@ NoobGPT HLS Video Player
 
 © The Karakters Kompany, 2025
 
-![](https://gdjkhp.github.io/img/Hardcore_Heart_(icon)_1000.png) 
+![](https://gdjkhp.github.io/img/Hardcore_Heart_(icon)_1000.png)
 
 ## Credits
 * <https://github.com/videojs/video.js>

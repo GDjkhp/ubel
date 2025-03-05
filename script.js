@@ -42,6 +42,7 @@ function addVideo() {
     `;
     const body = document.querySelector('body');
     body.insertAdjacentHTML('beforeend', videoHtml);
+    body.style.backgroundColor = "black";
 }
 
 function addSubtitles(player, subtitlesArray) {
